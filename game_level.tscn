@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bdodhobhonqeu"]
+[gd_scene load_steps=13 format=3 uid="uid://bdodhobhonqeu"]
 
 [ext_resource type="Texture2D" uid="uid://dw3nfd0sj7wg8" path="res://Assets/tiles.png" id="1_bwyfi"]
 [ext_resource type="PackedScene" uid="uid://d2edpo87b77nl" path="res://player.tscn" id="2_df5pp"]
 [ext_resource type="PackedScene" uid="uid://n7plrck6rod6" path="res://bush.tscn" id="3_ibsu8"]
+[ext_resource type="Shader" uid="uid://bq3rq1uvbmehx" path="res://game_level.gdshader" id="4_efyo6"]
+[ext_resource type="Texture2D" uid="uid://vipbr1rxm7s8" path="res://icon.svg" id="5_wqyo1"]
+[ext_resource type="Script" uid="uid://be8ybyv50koe0" path="res://icon.gd" id="6_v7qp1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_df5pp"]
 texture = ExtResource("1_bwyfi")
@@ -622,6 +625,31 @@ custom_data_layer_0/name = "walkable"
 custom_data_layer_0/type = 1
 sources/0 = SubResource("TileSetAtlasSource_df5pp")
 
+[sub_resource type="Gradient" id="Gradient_efyo6"]
+offsets = PackedFloat32Array(0, 0.672131, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.352459, 0.352459, 0.352459, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wqyo1"]
+noise_type = 4
+frequency = 0.0617
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_v7qp1"]
+seamless = true
+seamless_blend_skirt = 0.47
+color_ramp = SubResource("Gradient_efyo6")
+noise = SubResource("FastNoiseLite_wqyo1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_61fi8"]
+shader = ExtResource("4_efyo6")
+shader_parameter/noise1 = SubResource("NoiseTexture2D_v7qp1")
+shader_parameter/scroll1 = Vector2(0.05, 0.05)
+shader_parameter/scroll2 = Vector2(0.05, 0.05)
+shader_parameter/distortion_strength = 0.2
+shader_parameter/tone_color = Color(0.813178, 0.875854, 0.999859, 1)
+shader_parameter/top_color = Color(0, 0, 0, 1)
+shader_parameter/light_start = 0.275
+shader_parameter/light_end = 0.275
+
 [node name="Node2D" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -634,3 +662,10 @@ position = Vector2(-72, -41)
 
 [node name="Node2D2" parent="." instance=ExtResource("3_ibsu8")]
 position = Vector2(-57, -8)
+
+[node name="Icon" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_61fi8")
+position = Vector2(17, 16)
+scale = Vector2(0.960937, 0.929688)
+texture = ExtResource("5_wqyo1")
+script = ExtResource("6_v7qp1")
