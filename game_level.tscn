@@ -4,9 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://d2edpo87b77nl" path="res://player.tscn" id="2_df5pp"]
 [ext_resource type="Texture2D" uid="uid://de58mu4rjv408" path="res://Assets/assets_spritesheet_v2_free.png" id="2_wqyo1"]
 [ext_resource type="PackedScene" uid="uid://n7plrck6rod6" path="res://bush.tscn" id="3_ibsu8"]
-[ext_resource type="Shader" uid="uid://bq3rq1uvbmehx" path="res://game_level.gdshader" id="4_efyo6"]
+[ext_resource type="Shader" path="res://game_level.gdshader" id="4_efyo6"]
 [ext_resource type="Texture2D" uid="uid://vipbr1rxm7s8" path="res://icon.svg" id="5_wqyo1"]
-[ext_resource type="Script" uid="uid://be8ybyv50koe0" path="res://icon.gd" id="6_v7qp1"]
+[ext_resource type="Script" path="res://icon.gd" id="6_v7qp1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wqyo1"]
 texture = ExtResource("1_efyo6")
