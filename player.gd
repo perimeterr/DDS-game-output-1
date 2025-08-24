@@ -5,7 +5,7 @@ extends Node2D
 @onready var ray_cast_2d = $RayCast2D
 @onready var walkable_layers = [
 	$"../TileMap/Ground",
-	$"../TileMap/Decorations",
+	$"../TileMap/Bridge",
 ]
 var is_moving = false
 
