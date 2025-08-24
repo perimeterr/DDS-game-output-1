@@ -18,7 +18,7 @@ func _physics_process(delta):
 		is_moving = false
 		return
 		
-	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 1)
+	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
 func _process(delta):
 	if is_moving:
@@ -53,7 +53,7 @@ func move(direction: Vector2):
 	if tile_data == null or tile_data.get_custom_data("walkable") == false:
 		return
 		
-	ray_cast_2d.target_position = direction * 16
+	ray_cast_2d.target_position = direction * 32
 	ray_cast_2d.force_raycast_update()
 	
 	if ray_cast_2d.is_colliding():
