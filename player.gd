@@ -3,6 +3,10 @@ extends Node2D
 @onready var tile_map = $"../TileMap"
 @onready var sprite_2d = $Sprite2D
 @onready var ray_cast_2d = $RayCast2D
+@onready var walkable_layers = [
+	$"../TileMap/Ground",
+	$"../TileMap/Decorations",
+]
 var is_moving = false
 
 
@@ -28,6 +32,13 @@ func _process(delta):
 		move(Vector2.LEFT)
 	elif Input.is_action_pressed("right"):
 		move(Vector2.RIGHT)
+		
+func get_walkable_tile_data(target_tile: Vector2i) -> TileData:
+	for layer in walkable_layers:
+		var tile_data = layer.get_cell_tile_data(target_tile)
+		if tile_data != null and tile_data.get_custom_data("walkable") == true:
+			return tile_data
+	return null
 
 func move(direction: Vector2):
 	var current_tile: Vector2i = tile_map.local_to_map(global_position)
@@ -37,9 +48,9 @@ func move(direction: Vector2):
 		current_tile.y + direction.y,
 	)
 	
-	var tile_data: TileData = tile_map.get_cell_tile_data(0, target_tile)
+	var tile_data: TileData = get_walkable_tile_data(target_tile)
 	
-	if tile_data.get_custom_data("walkable") == false:
+	if tile_data == null or tile_data.get_custom_data("walkable") == false:
 		return
 		
 	ray_cast_2d.target_position = direction * 16
