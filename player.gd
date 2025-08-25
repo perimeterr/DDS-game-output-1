@@ -4,6 +4,9 @@ extends Node2D
 @onready var sprite_2d : Sprite2D = $Sprite2D
 @onready var ray_cast_2d : RayCast2D = $RayCast2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var walkable_layers = [
+	$"../TileMap/Ground",
+]
 
 var is_moving = false
 var cardinal_direction : Vector2 = Vector2.DOWN
@@ -40,6 +43,13 @@ func _process(delta):
 		direction = Vector2.ZERO
 		
 	move(direction)
+	
+func get_walkable_tile_data(target_tile: Vector2i) -> TileData:
+	for layer in walkable_layers:
+		var tile_data = layer.get_cell_tile_data(target_tile)
+		if tile_data != null and tile_data.get_custom_data("walkable") == true:
+			return tile_data
+	return null
 
 func move(direction: Vector2):
 	if direction == Vector2.ZERO:
@@ -52,12 +62,13 @@ func move(direction: Vector2):
 		current_tile.y + direction.y,
 	)
 	
-	var tile_data: TileData = tile_map.get_cell_tile_data(0, target_tile)
+	var tile_data: TileData = get_walkable_tile_data(target_tile)
 	
-	if tile_data.get_custom_data("walkable") == false:
+	if tile_data == null or tile_data.get_custom_data("walkable") == false:
 		return
+
 		
-	ray_cast_2d.target_position = direction * 16
+	ray_cast_2d.target_position = direction * 32
 	ray_cast_2d.force_raycast_update()
 	
 	if ray_cast_2d.is_colliding():
@@ -68,6 +79,7 @@ func move(direction: Vector2):
 	global_position = tile_map.map_to_local(target_tile)
 	
 	sprite_2d.global_position = tile_map.map_to_local(current_tile)
+	
 	
 func SetDirection() -> bool:
 	var new_dir : Vector2 = direction
