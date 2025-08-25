@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xg4meivf3pv3"
-path="res://.godot/imported/Stone and Rock.png-a488623f813424d61c91fbc5ed28c97e.ctex"
+uid="uid://bhjqwknmx4ysq"
+path="res://.godot/imported/ws_tileset_free.png-db58c0dd3569bd4b1682f42cb8a99bc8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Stone and Rock.png"
-dest_files=["res://.godot/imported/Stone and Rock.png-a488623f813424d61c91fbc5ed28c97e.ctex"]
+source_file="res://Assets/ws_tileset_free.png"
+dest_files=["res://.godot/imported/ws_tileset_free.png-db58c0dd3569bd4b1682f42cb8a99bc8.ctex"]
 
 [params]
 

@@ -7,6 +7,7 @@ extends Node2D
 @onready var walkable_layers = [
 	$"../TileMap/Ground",
 	$"../TileMap/Bridge",
+	# $"../TileMap/DirtPath",
 ]
 var is_moving = false
 var cardinal_direction : Vector2 = Vector2.DOWN
