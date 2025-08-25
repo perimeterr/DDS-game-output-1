@@ -6,6 +6,7 @@ extends Node2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var walkable_layers = [
 	$"../TileMap/Ground",
+	$"../TileMap/Bridge",
 ]
 
 var is_moving = false
