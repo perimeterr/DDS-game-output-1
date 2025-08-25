@@ -23,7 +23,7 @@ func _physics_process(delta):
 		is_moving = false
 		return
 		
-	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 1)
+	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
 func _process(delta):
 	if SetState() || SetDirection():
