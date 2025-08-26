@@ -10,6 +10,8 @@ extends Node2D
 ]
 
 var is_moving = false
+var slide_queue: bool = false
+var slide_direction: Vector2 = Vector2.ZERO
 var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
@@ -17,11 +19,18 @@ var state : String = "idle"
 
 func _physics_process(delta):
 	if is_moving == false:
+		if slide_queue:
+			slide_queue = false
+			move(slide_direction)
 		return
 	
-	if global_position == sprite_2d.global_position:
+	if sprite_2d.global_position == global_position:
 		is_moving = false
-		return
+		var current_tile: Vector2i = tile_map.local_to_map(global_position)
+		var tile_data: TileData = get_walkable_tile_data(current_tile)
+		if tile_data and tile_data.get_custom_data("slide") == true:
+			slide_queue = true
+			slide_direction = cardinal_direction
 		
 	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
@@ -80,7 +89,6 @@ func move(direction: Vector2):
 	global_position = tile_map.map_to_local(target_tile)
 	
 	sprite_2d.global_position = tile_map.map_to_local(current_tile)
-	
 	
 func SetDirection() -> bool:
 	var new_dir : Vector2 = direction
