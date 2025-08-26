@@ -4,9 +4,14 @@ extends Node2D
 @onready var sprite_2d : Sprite2D = $Sprite2D
 @onready var ray_cast_2d : RayCast2D = $RayCast2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+
 @onready var walkable_layers = [
 	$"../TileMap/Ground",
 	$"../TileMap/Bridge",
+]
+
+@onready var blocking_layers = [
+	$"../TileMap/Obstacles",
 ]
 
 var is_moving = false
@@ -17,6 +22,8 @@ var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
 
+const TILE_SIZE: int = 32
+const MOVE_SPEED: float = 2.0
 
 func _physics_process(delta):
 	if is_moving == false:
@@ -38,7 +45,7 @@ func _physics_process(delta):
 		else:
 			is_sliding = false
 		
-	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
+	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, MOVE_SPEED)
 
 func _process(delta):
 	if SetState() || SetDirection():
@@ -66,6 +73,13 @@ func get_walkable_tile_data(target_tile: Vector2i) -> TileData:
 		if tile_data != null and tile_data.get_custom_data("walkable") == true:
 			return tile_data
 	return null
+	
+func is_blocked(target_tile: Vector2i) -> bool:
+	for layer in blocking_layers:
+		var tile_data = layer.get_cell_tile_data(target_tile)
+		if tile_data != null: 
+			return true
+	return false
 
 func move(direction: Vector2):
 	if direction == Vector2.ZERO:
@@ -82,15 +96,12 @@ func move(direction: Vector2):
 	
 	if tile_data == null or tile_data.get_custom_data("walkable") == false:
 		return
-
 		
-	ray_cast_2d.target_position = direction * 32
-	ray_cast_2d.force_raycast_update()
-	
-	if ray_cast_2d.is_colliding():
+	if is_blocked(target_tile):
 		return
 	
 	is_moving = true
+	cardinal_direction = direction
 	
 	global_position = tile_map.map_to_local(target_tile)
 	
