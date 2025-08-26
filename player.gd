@@ -10,6 +10,7 @@ extends Node2D
 ]
 
 var is_moving = false
+var is_sliding = false
 var slide_queue: bool = false
 var slide_direction: Vector2 = Vector2.ZERO
 var cardinal_direction : Vector2 = Vector2.DOWN
@@ -21,7 +22,10 @@ func _physics_process(delta):
 	if is_moving == false:
 		if slide_queue:
 			slide_queue = false
+			is_sliding = true
 			move(slide_direction)
+		else:
+			is_sliding = false
 		return
 	
 	if sprite_2d.global_position == global_position:
@@ -31,6 +35,8 @@ func _physics_process(delta):
 		if tile_data and tile_data.get_custom_data("slide") == true:
 			slide_queue = true
 			slide_direction = cardinal_direction
+		else:
+			is_sliding = false
 		
 	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
@@ -38,7 +44,7 @@ func _process(delta):
 	if SetState() || SetDirection():
 		UpdateAnimation()
 	
-	if is_moving:
+	if is_moving or is_sliding:
 		return
 		
 	if Input.is_action_pressed("up"):
