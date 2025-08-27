@@ -14,6 +14,8 @@ extends Node2D
 	$"../TileMap/Obstacles",
 ]
 
+@onready var mountain_layer = $"../TileMap/Mountain"
+
 var is_moving = false
 var is_sliding = false
 var slide_queue: bool = false
@@ -21,9 +23,6 @@ var slide_direction: Vector2 = Vector2.ZERO
 var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
-
-const TILE_SIZE: int = 32
-const MOVE_SPEED: float = 2.0
 
 func _ready():
 	sprite_2d.frame = 24
@@ -121,6 +120,13 @@ func move(direction: Vector2):
 		
 	if is_blocked(target_tile):
 		return
+	
+
+	var mountain_tile: TileData = mountain_layer.get_cell_tile_data(target_tile)
+	if mountain_tile != null and mountain_tile.has_custom_data("one_way"):
+		# Only allow stepping DOWN into this tile
+		if direction != Vector2.DOWN:
+			return
 	
 	is_moving = true
 	cardinal_direction = direction
