@@ -22,13 +22,29 @@ var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
 
+const TILE_SIZE: int = 32
+const MOVE_SPEED: float = 2.0
+
+func _ready():
+	sprite_2d.frame = 24
+
 func _physics_process(delta):
 	if is_moving == false:
 		if slide_queue:
 			slide_queue = false
 			is_sliding = true
+			animation_player.pause()
+			if slide_direction == Vector2.UP:
+				sprite_2d.frame = 32
+			elif slide_direction == Vector2.RIGHT:
+				sprite_2d.frame = 33
+			elif slide_direction == Vector2.LEFT:
+				sprite_2d.frame = 34
+			elif slide_direction == Vector2.DOWN:
+				sprite_2d.frame = 35
 			move(slide_direction)
 		else:
+			UpdateAnimation()
 			is_sliding = false
 		return
 	
@@ -51,10 +67,10 @@ func _physics_process(delta):
 	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
 func _process(delta):
-	if SetState() || SetDirection():
+	if SetState():
 		UpdateAnimation()
 	
-	if is_moving or is_sliding:
+	if is_moving || is_sliding:
 		return
 		
 	if Input.is_action_pressed("up"):
@@ -67,6 +83,9 @@ func _process(delta):
 		direction = Vector2.RIGHT
 	else:
 		direction = Vector2.ZERO
+		
+	if SetDirection():
+		UpdateAnimation()
 		
 	move(direction)
 	
@@ -123,6 +142,9 @@ func SetDirection() -> bool:
 	return true
 	
 func SetState() -> bool:
+	if !is_moving:
+		state = "idle"
+		return true
 	var new_state : String = "idle" if direction == Vector2.ZERO else "walk"
 	if new_state == state:
 		return false
