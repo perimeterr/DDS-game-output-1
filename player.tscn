@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://h054mk8pl2xk" path="res://Assets/frog.png" id="2_onrkg"]
 
 [sub_resource type="Animation" id="Animation_i3pqv"]
+resource_name = "idle_down"
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
