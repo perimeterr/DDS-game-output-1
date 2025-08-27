@@ -25,6 +25,9 @@ var state : String = "idle"
 const TILE_SIZE: int = 32
 const MOVE_SPEED: float = 2.0
 
+func _ready():
+	$Sprite2D.frame = 24
+
 func _physics_process(delta):
 	if is_moving == false:
 		if slide_queue:
