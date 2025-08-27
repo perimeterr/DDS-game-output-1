@@ -51,7 +51,7 @@ func _physics_process(delta):
 	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, MOVE_SPEED)
 
 func _process(delta):
-	if SetState() || SetDirection():
+	if SetState():
 		UpdateAnimation()
 	
 	if is_moving or is_sliding:
@@ -67,6 +67,9 @@ func _process(delta):
 		direction = Vector2.RIGHT
 	else:
 		direction = Vector2.ZERO
+		
+	if SetDirection():
+		UpdateAnimation()
 		
 	move(direction)
 	
@@ -123,6 +126,9 @@ func SetDirection() -> bool:
 	return true
 	
 func SetState() -> bool:
+	if is_moving == false:
+		state = "idle"
+		return true
 	var new_state : String = "idle" if direction == Vector2.ZERO else "walk"
 	if new_state == state:
 		return false
