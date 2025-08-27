@@ -22,9 +22,6 @@ var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
 
-const TILE_SIZE: int = 32
-const MOVE_SPEED: float = 2.0
-
 func _physics_process(delta):
 	if is_moving == false:
 		if slide_queue:
@@ -42,10 +39,16 @@ func _physics_process(delta):
 		if tile_data and tile_data.get_custom_data("slide") == true:
 			slide_queue = true
 			slide_direction = cardinal_direction
-		else:
-			is_sliding = false
+		elif tile_data.has_custom_data("arrow"):
+			var arrow_dir: Vector2 = tile_data.get_custom_data("arrow")
+			if arrow_dir != Vector2.ZERO:
+				slide_queue = true
+				slide_direction = arrow_dir
+				is_sliding = true
+			else:
+				is_sliding = false
 		
-	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, MOVE_SPEED)
+	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
 
 func _process(delta):
 	if SetState() || SetDirection():
