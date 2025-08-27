@@ -26,15 +26,25 @@ const TILE_SIZE: int = 32
 const MOVE_SPEED: float = 2.0
 
 func _ready():
-	$Sprite2D.frame = 24
+	sprite_2d.frame = 24
 
 func _physics_process(delta):
 	if is_moving == false:
 		if slide_queue:
 			slide_queue = false
 			is_sliding = true
+			animation_player.pause()
+			if slide_direction == Vector2.UP:
+				sprite_2d.frame = 32
+			elif slide_direction == Vector2.RIGHT:
+				sprite_2d.frame = 33
+			elif slide_direction == Vector2.LEFT:
+				sprite_2d.frame = 34
+			elif slide_direction == Vector2.DOWN:
+				sprite_2d.frame = 35
 			move(slide_direction)
 		else:
+			UpdateAnimation()
 			is_sliding = false
 		return
 	
@@ -54,7 +64,7 @@ func _process(delta):
 	if SetState():
 		UpdateAnimation()
 	
-	if is_moving or is_sliding:
+	if is_moving || is_sliding:
 		return
 		
 	if Input.is_action_pressed("up"):
@@ -126,7 +136,7 @@ func SetDirection() -> bool:
 	return true
 	
 func SetState() -> bool:
-	if is_moving == false:
+	if !is_moving:
 		state = "idle"
 		return true
 	var new_state : String = "idle" if direction == Vector2.ZERO else "walk"
