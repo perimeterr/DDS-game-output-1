@@ -1304,7 +1304,7 @@ tile_map_data = PackedByteArray("AAD7//v/AQAIAAQAAAD7//z/AQAIAAUAAAD8//v/AQAJAAQ
 tile_set = SubResource("TileSet_ibsu8")
 
 [node name="Node2D" parent="." instance=ExtResource("2_df5pp")]
-position = Vector2(-80, -48)
+position = Vector2(-312, 592)
 
 [node name="Node2D2" parent="." instance=ExtResource("3_ibsu8")]
 position = Vector2(-464, 24)

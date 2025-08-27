@@ -33,18 +33,8 @@ func _physics_process(delta):
 		if slide_queue:
 			slide_queue = false
 			is_sliding = true
-			animation_player.pause()
-			if slide_direction == Vector2.UP:
-				sprite_2d.frame = 32
-			elif slide_direction == Vector2.RIGHT:
-				sprite_2d.frame = 33
-			elif slide_direction == Vector2.LEFT:
-				sprite_2d.frame = 34
-			elif slide_direction == Vector2.DOWN:
-				sprite_2d.frame = 35
 			move(slide_direction)
 		else:
-			UpdateAnimation()
 			is_sliding = false
 		return
 	
@@ -54,7 +44,7 @@ func _physics_process(delta):
 		var tile_data: TileData = get_walkable_tile_data(current_tile)
 		if tile_data and tile_data.get_custom_data("slide") == true:
 			slide_queue = true
-			slide_direction = cardinal_direction
+			
 		elif tile_data.has_custom_data("arrow"):
 			var arrow_dir: Vector2 = tile_data.get_custom_data("arrow")
 			if arrow_dir != Vector2.ZERO:
@@ -95,7 +85,7 @@ func get_walkable_tile_data(target_tile: Vector2i) -> TileData:
 		if tile_data != null and tile_data.get_custom_data("walkable") == true:
 			return tile_data
 	return null
-	
+
 func is_blocked(target_tile: Vector2i) -> bool:
 	for layer in blocking_layers:
 		var tile_data = layer.get_cell_tile_data(target_tile)
@@ -121,6 +111,10 @@ func move(direction: Vector2):
 		
 	if is_blocked(target_tile):
 		return
+		
+	if tile_data == null or tile_data.get_custom_data("slide") == true:
+		is_sliding = true
+		slide_direction = cardinal_direction
 	
 	is_moving = true
 	cardinal_direction = direction
@@ -152,8 +146,20 @@ func SetState() -> bool:
 	return true
 	
 func UpdateAnimation() -> void:
+	if is_sliding:
+		animation_player.pause()
+		if slide_direction == Vector2.UP:
+			sprite_2d.frame = 32
+		elif slide_direction == Vector2.RIGHT:
+			sprite_2d.frame = 33
+		elif slide_direction == Vector2.LEFT:
+			sprite_2d.frame = 34
+		elif slide_direction == Vector2.DOWN:
+			sprite_2d.frame = 35
+		return
+
 	animation_player.play( state + "_" + AnimDirection())
-	pass
+		
 	
 func AnimDirection() -> String:
 	if cardinal_direction == Vector2.DOWN:
