@@ -160,9 +160,19 @@ func move(direction: Vector2):
 
 	var mountain_tile: TileData = mountain_layer.get_cell_tile_data(target_tile)
 	if mountain_tile != null and mountain_tile.has_custom_data("one_way"):
-		# Only allow stepping DOWN into this tile
 		if direction != Vector2.DOWN:
 			return
+		
+		var landing_tile: Vector2i = target_tile + Vector2i.DOWN
+		var landing_data: TileData = get_walkable_tile_data(landing_tile)
+
+		if landing_data == null or landing_data.get_custom_data("walkable") == false:
+			return
+			
+		if is_blocked(landing_tile):
+			return
+
+		target_tile = landing_tile
 	
 	is_moving = true
 	cardinal_direction = direction
