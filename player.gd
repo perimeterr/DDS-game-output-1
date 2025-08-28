@@ -25,8 +25,8 @@ var state : String = "idle"
 
 const TILE_SIZE: int = 32
 const MOVE_SPEED: float = 2.0
-const WATER_TILE_SOURCE_ID = 12
-const WATER_TILE_ATLAS_COORDS = Vector2i(0,0)
+const LILY_PAD_SOURCE_ID = 6
+const LILY_PAD_ATLAS_COORDS = Vector2i(0,0)
 
 func _ready():
 	sprite_2d.frame = 24
@@ -92,7 +92,7 @@ func _on_sinking_timer_timeout(tile_to_sink: Vector2i, timer_instance: Timer):
 	timer_instance.queue_free()
 	
 func _on_reset_timer_timeout(tile_to_reset: Vector2i, timer_instance: Timer):
-	$"../TileMap/Bridge".set_cell(tile_to_reset, 6, Vector2i(0,0))
+	$"../TileMap/Bridge".set_cell(tile_to_reset, LILY_PAD_SOURCE_ID, LILY_PAD_ATLAS_COORDS)
 	timer_instance.queue_free()
 
 func _process(delta):
