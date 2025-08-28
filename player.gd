@@ -51,7 +51,7 @@ func _physics_process(delta):
 			var new_timer = Timer.new()
 			add_child(new_timer)
 			
-			new_timer.wait_time = 1.0
+			new_timer.wait_time = 0.5
 			new_timer.one_shot = true
 			
 			new_timer.timeout.connect(_on_sinking_timer_timeout.bind(current_tile, new_timer))
