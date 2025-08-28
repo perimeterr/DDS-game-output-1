@@ -75,10 +75,24 @@ func _on_sinking_timer_timeout(tile_to_sink: Vector2i, timer_instance: Timer):
 	if player_current_tile == tile_to_sink:
 		global_position = Vector2i(720,208)
 		
-		sprite_2d.global_position = Vector2i(0,0)
+		sprite_2d.global_position = Vector2i(720,208)
 
 	$"../TileMap/Bridge".set_cell(tile_to_sink, -1)
+	
+	var reset_timer = Timer.new()
+	add_child(reset_timer)
+	
+	reset_timer.wait_time = 3.0
+	reset_timer.one_shot = true
+	
+	reset_timer.timeout.connect(_on_reset_timer_timeout.bind(tile_to_sink,reset_timer))
+	
+	reset_timer.start()
 
+	timer_instance.queue_free()
+	
+func _on_reset_timer_timeout(tile_to_reset: Vector2i, timer_instance: Timer):
+	$"../TileMap/Bridge".set_cell(tile_to_reset, 6, Vector2i(0,0))
 	timer_instance.queue_free()
 
 func _process(delta):
