@@ -15,6 +15,8 @@ extends Node2D
 	$"../TileMap/Obstacles",
 ]
 
+@onready var mountain_layer = $"../TileMap/Mountain"
+
 var is_moving = false
 var is_sliding = false
 var slide_queue: bool = false
@@ -154,6 +156,13 @@ func move(direction: Vector2):
 	if tile_data == null or tile_data.get_custom_data("slide") == true:
 		is_sliding = true
 		slide_direction = cardinal_direction
+	
+
+	var mountain_tile: TileData = mountain_layer.get_cell_tile_data(target_tile)
+	if mountain_tile != null and mountain_tile.has_custom_data("one_way"):
+		# Only allow stepping DOWN into this tile
+		if direction != Vector2.DOWN:
+			return
 	
 	is_moving = true
 	cardinal_direction = direction
