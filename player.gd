@@ -4,6 +4,7 @@ extends Node2D
 @onready var sprite_2d : Sprite2D = $Sprite2D
 @onready var ray_cast_2d : RayCast2D = $RayCast2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var sinking_timer: Timer = $Timer
 
 @onready var walkable_layers = [
 	$"../TileMap/Ground",
@@ -24,6 +25,11 @@ var cardinal_direction : Vector2 = Vector2.DOWN
 var direction : Vector2 = Vector2.ZERO
 var state : String = "idle"
 
+const TILE_SIZE: int = 32
+const MOVE_SPEED: float = 2.0
+const LILY_PAD_SOURCE_ID = 6
+const LILY_PAD_ATLAS_COORDS = Vector2i(0,0)
+
 func _ready():
 	sprite_2d.frame = 24
 
@@ -32,18 +38,8 @@ func _physics_process(delta):
 		if slide_queue:
 			slide_queue = false
 			is_sliding = true
-			animation_player.pause()
-			if slide_direction == Vector2.UP:
-				sprite_2d.frame = 32
-			elif slide_direction == Vector2.RIGHT:
-				sprite_2d.frame = 33
-			elif slide_direction == Vector2.LEFT:
-				sprite_2d.frame = 34
-			elif slide_direction == Vector2.DOWN:
-				sprite_2d.frame = 35
 			move(slide_direction)
 		else:
-			UpdateAnimation()
 			is_sliding = false
 		return
 	
@@ -51,9 +47,19 @@ func _physics_process(delta):
 		is_moving = false
 		var current_tile: Vector2i = tile_map.local_to_map(global_position)
 		var tile_data: TileData = get_walkable_tile_data(current_tile)
+		if tile_data and tile_data.get_custom_data("sink") == true:
+			var new_timer = Timer.new()
+			add_child(new_timer)
+			
+			new_timer.wait_time = 1.0
+			new_timer.one_shot = true
+			
+			new_timer.timeout.connect(_on_sinking_timer_timeout.bind(current_tile, new_timer))
+			new_timer.start()
+			print('Sinking Timer started')
 		if tile_data and tile_data.get_custom_data("slide") == true:
 			slide_queue = true
-			slide_direction = cardinal_direction
+			
 		elif tile_data.has_custom_data("arrow"):
 			var arrow_dir: Vector2 = tile_data.get_custom_data("arrow")
 			if arrow_dir != Vector2.ZERO:
@@ -64,6 +70,32 @@ func _physics_process(delta):
 				is_sliding = false
 		
 	sprite_2d.global_position = sprite_2d.global_position.move_toward(global_position, 2)
+
+func _on_sinking_timer_timeout(tile_to_sink: Vector2i, timer_instance: Timer):
+	var player_current_tile = tile_map.local_to_map(global_position)
+
+	if player_current_tile == tile_to_sink:
+		global_position = Vector2i(720,208)
+		
+		sprite_2d.global_position = Vector2i(720,208)
+
+	$"../TileMap/Bridge".set_cell(tile_to_sink, -1)
+	
+	var reset_timer = Timer.new()
+	add_child(reset_timer)
+	
+	reset_timer.wait_time = 3.0
+	reset_timer.one_shot = true
+	
+	reset_timer.timeout.connect(_on_reset_timer_timeout.bind(tile_to_sink,reset_timer))
+	
+	reset_timer.start()
+
+	timer_instance.queue_free()
+	
+func _on_reset_timer_timeout(tile_to_reset: Vector2i, timer_instance: Timer):
+	$"../TileMap/Bridge".set_cell(tile_to_reset, LILY_PAD_SOURCE_ID, LILY_PAD_ATLAS_COORDS)
+	timer_instance.queue_free()
 
 func _process(delta):
 	if SetState():
@@ -94,7 +126,7 @@ func get_walkable_tile_data(target_tile: Vector2i) -> TileData:
 		if tile_data != null and tile_data.get_custom_data("walkable") == true:
 			return tile_data
 	return null
-	
+
 func is_blocked(target_tile: Vector2i) -> bool:
 	for layer in blocking_layers:
 		var tile_data = layer.get_cell_tile_data(target_tile)
@@ -120,6 +152,10 @@ func move(direction: Vector2):
 		
 	if is_blocked(target_tile):
 		return
+		
+	if tile_data == null or tile_data.get_custom_data("slide") == true:
+		is_sliding = true
+		slide_direction = cardinal_direction
 	
 
 	var mountain_tile: TileData = mountain_layer.get_cell_tile_data(target_tile)
@@ -158,8 +194,20 @@ func SetState() -> bool:
 	return true
 	
 func UpdateAnimation() -> void:
+	if is_sliding:
+		animation_player.pause()
+		if slide_direction == Vector2.UP:
+			sprite_2d.frame = 32
+		elif slide_direction == Vector2.RIGHT:
+			sprite_2d.frame = 33
+		elif slide_direction == Vector2.LEFT:
+			sprite_2d.frame = 34
+		elif slide_direction == Vector2.DOWN:
+			sprite_2d.frame = 35
+		return
+
 	animation_player.play( state + "_" + AnimDirection())
-	pass
+		
 	
 func AnimDirection() -> String:
 	if cardinal_direction == Vector2.DOWN:
